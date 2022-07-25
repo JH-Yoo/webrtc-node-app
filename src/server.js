@@ -8,7 +8,7 @@ app.use("/", express.static("public"));
 
 io.on("connection", (socket) => {
   socket.on("join", (roomId) => {
-    const roomClient = io.sockets.adapter.rooms[roomId] || { length: 0 };
+    const roomClient = io.sockets.adapter.rooms.get(roomId) || { length: 0 };
     const numberOfClient = roomClient.length;
     if (numberOfClient == 0) {
       console.log("Create room : " + roomId);

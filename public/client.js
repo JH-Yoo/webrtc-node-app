@@ -58,19 +58,19 @@ socket.on("start_call", async () => {
 socket.on("webrtc_offer", async (event) => {
   console.log("Socket event call back : webrtc_offer");
 
-  if (isRoomCreator) {
+  if (!isRoomCreator) {
     rtcPeerConnection = new RTCPeerConnection(iceServers);
     addLocalTracks(rtcPeerConnection);
     rtcPeerConnection.ontrack = setRemoteStream;
     rtcPeerConnection.onicecandidate = sendIceCandidate;
-    rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
+    rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event.sdp));
     await createAnswer(rtcPeerConnection);
   }
 });
 
 socket.on("webrtc_answer", async (event) => {
   console.log("Socket event call back : webrtc_answer");
-  rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
+  rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event.sdp));
 });
 
 socket.on("webrtc_ice_candidate", async (event) => {
