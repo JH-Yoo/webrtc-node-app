@@ -10,6 +10,14 @@ wss.on('connection', (ws) => {
   if (wss.clients.length > 2) {
     return;
   }
+  /**
+   * expected call signal
+   * - join
+   * - start_call
+   * - webrtc_offer
+   * - webrtc_answer
+   * - webrtc_ice_candidate
+   */
   ws.on('message', (message) => {
     console.log('received: %s', message);
     const response = JSON.parse(message);
