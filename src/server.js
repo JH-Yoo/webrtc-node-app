@@ -44,5 +44,5 @@ io.on("connection", (socket) => {
 
 const port = 3000;
 server.listen(port, () => {
-  console.log("Hello Iam server");
+  console.log("Signaling server for P2P with socket io | port : " + port);
 });

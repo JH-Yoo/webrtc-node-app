@@ -7,7 +7,7 @@ const { WebSocketServer } = require("ws");
 const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws) => {
-  if (wss.clients.length > 2) {
+  if (wss.clients.size > 2) {
     return;
   }
   /**
@@ -31,9 +31,8 @@ wss.on('connection', (ws) => {
     }
   });
 
-  ws.on('close', (event) => {
+  ws.on('close', () => {
     console.log("disconnect");
-    console.log(event);
   })
 });
 
@@ -42,11 +41,6 @@ wss.broadcast = (msg) => {
     client.send(msg);
   });
 };
-
-const port = 3000;
-server.listen(port, () => {
-  console.log("Hello Iam server. port : " + port);
-});
 
 const join = () => {
   console.log("try join to room");
@@ -60,3 +54,8 @@ const broadcast = (data = {}) => {
   console.log(`BroadCasting ${data.type} event to peers`);
   wss.broadcast(JSON.stringify(data));
 }
+
+const port = 3000;
+server.listen(port, () => {
+  console.log("Singaling server for P2P with only websocket | port : " + port);
+});
