@@ -1,9 +1,10 @@
-const express = require("express");
+import express from "express";
 const app = express();
-const server = require("http").createServer(app);
 
-const { WebSocketServer } = require("ws");
+import http from "http";
+const server = http.createServer(app);
 
+import { WebSocketServer } from "ws";
 const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws) => {
