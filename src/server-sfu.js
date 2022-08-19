@@ -135,6 +135,6 @@ const getOtherUser = (myId) => {
   });
   return users;
 }
-server.listen(port, () => {
+server.listen(PORT, () => {
   console.log("Media server for SFU with only websocket | port : " + PORT);
 });
