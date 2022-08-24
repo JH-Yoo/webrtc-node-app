@@ -89,7 +89,6 @@ const sendAnswer2Uploader = async (ws, data) => {
   const uploader = uploaders[ws.id];
   uploader.setOnTrack(() => enterUser(uploader));
   await uploader.sendAnswer(data.sdp);
-  console.log("connect uploader :", ws.id);
 }
 const getIceCandidate = async (pc, data) => {
   await pc.addIceCandidate(data.candidate);
