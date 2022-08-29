@@ -53,6 +53,12 @@ wss.on('connection', (ws) => {
     if (downloaders[ws.id]) {
       downloaders[ws.id].map(({ pc }) => pc.close());
       delete downloaders[ws.id];
+
+      Object.entries(downloaders).forEach(([id, pcList]) => {
+        console.log("uploader leave", ws.id);
+        pcList.filter((({ id }) => id == ws.id))[0].pc.close();
+        uploaders[id].leaveUser(ws.id);
+      })
     }
     if (uploaders[ws.id]) {
       uploaders[ws.id].close();
