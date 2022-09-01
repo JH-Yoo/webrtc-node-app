@@ -7,18 +7,16 @@ const server = http.createServer(app);
 import { WebSocketServer } from "ws";
 const wss = new WebSocketServer({ server });
 
+import { getConst, getOtherUserId } from "../lib/utils.js";
 import Uploader from "../lib/uploader.js";
 import Downloader from "../lib/downloader.js";
-
-const LIMIT_CONNECTION = 10;
-const PORT = 3000;
 
 const uploaders = {};
 const downloaders = {};
 
 wss.on('connection', (ws) => {
-  if (wss.clients.size > LIMIT_CONNECTION) {
-    console.log("error : max connection! | limit count :", LIMIT_CONNECTION);
+  if (wss.clients.size > getConst("LIMIT_CONNECTION")) {
+    console.log("error : max connection! | limit count :", getConst("LIMIT_CONNECTION"));
     return;
   }
   else {
@@ -75,7 +73,7 @@ wss.getUniqueID = () => {
 
 const join = (ws) => {
   const pc = new Uploader(ws);
-  const others = getOtherUser(ws.id);
+  const others = getOtherUserId(wss.clients, ws.id);
 
   uploaders[ws.id] = pc;
 
@@ -104,7 +102,7 @@ const receiveAnswerFromDownloader = async (socketId, data) => {
   await downloader.setRemoteDescription(data.sdp);
 }
 const enterUser = (uploader) => {
-  getOtherUser(uploader.getId()).forEach(id => {
+  getOtherUserId(wss.clients, uploader.getId()).forEach(id => {
     const downloaderWs = findClient(id);
     if (!downloaderWs) return;
     
@@ -133,13 +131,7 @@ const addDownloader = (myId, uploaderId, pc) => {
     pc,
   });
 }
-const getOtherUser = (myId) => {
-  const users = [];
-  wss.clients.forEach(({ id }) => {
-    if (id !== myId) users.push(id);
-  });
-  return users;
-}
-server.listen(PORT, () => {
-  console.log("Media server for SFU with only websocket | port : " + PORT);
+
+server.listen(getConst("PORT"), () => {
+  console.log("Media server for SFU with only websocket | port : " + getConst("PORT"));
 });
