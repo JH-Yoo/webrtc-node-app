@@ -15,6 +15,9 @@ const house = {};
 wss.on('connection', (ws) => {
   if (wss.clients.size > getConst("LIMIT_CONNECTION")) {
     console.log("error : max connection! | limit count :", getConst("LIMIT_CONNECTION"));
+    ws.send(JSON.stringify({
+      type: "limit_connection"
+    }));
     return;
   }
   else {
