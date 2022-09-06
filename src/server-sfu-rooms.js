@@ -31,16 +31,16 @@ wss.on('connection', (ws) => {
         joinRoom(ws, roomId);
         break;
       case "uploader_offer":
-        house[roomId].sendAnswerToSourcePC(ws, response);
+        callRoom(ws, roomId, (room) => room.sendAnswerToSourcePC(ws, response));
         break;
       case "downloader_answer":
-        house[roomId].receiveAnswerFromRelayPC(ws.id, response);
+        callRoom(ws, roomId, (room) => room.receiveAnswerFromRelayPC(ws.id, response));
         break;
       case "uploader_candidate":
-        house[roomId].getSourceIceCandidate(ws.id, response);
+        callRoom(ws, roomId, (room) => room.getSourceIceCandidate(ws.id, response));
         break;
       case "downloader_candidate":
-        house[roomId].getRelayIceCandidate(ws.id, response);
+        callRoom(ws, roomId, (room) => room.getRelayIceCandidate(ws.id, response));
         break;
       default:
         console.log("error : un expected type! : " + response.type);
@@ -73,6 +73,17 @@ const joinRoom = (ws, roomId) => {
 
   house[roomId].join(ws);
   ws.roomId = roomId;
+}
+
+const callRoom = (ws, roomId, callback) => {
+  if (!roomId || !house[roomId]) {
+    if (!ws.roomId || !house[ws.roomId]) {
+      console.error("Cannot find room :", roomId, ws.roomId);
+      return null;
+    }
+    return callback(house[ws.roomId]);
+  }
+  return callback(house[roomId]);
 }
 
 server.listen(getConst("PORT"), () => {
