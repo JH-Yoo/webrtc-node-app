@@ -30,3 +30,12 @@ npm run server-sfu
 ```
 
 WebSocket 패키지를 사용하여 구현한 SFU를 위한 미디어 서버.
+
+
+## SFU with room concept
+
+```
+npm run server-sfu-rooms
+```
+
+위 SFU 서버에 Room 개념이 추가된 서버로, 
