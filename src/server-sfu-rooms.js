@@ -30,6 +30,8 @@ wss.on('connection', (ws) => {
       case "join":
         joinRoom(ws, roomId);
         break;
+      case "uploader_connect":
+        callRoom(ws, roomId, (room) => room.connectSource(ws));
       case "uploader_offer":
         callRoom(ws, roomId, (room) => room.sendAnswerToSourcePC(ws, response));
         break;
@@ -41,6 +43,9 @@ wss.on('connection', (ws) => {
         break;
       case "downloader_candidate":
         callRoom(ws, roomId, (room) => room.getRelayIceCandidate(ws.id, response));
+        break;
+      case "uploader_stats":
+        callRoom(ws, roomId, (room) => room.setStats(ws, response));
         break;
       default:
         console.log("error : un expected type! : " + response.type);
