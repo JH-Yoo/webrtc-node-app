@@ -23,15 +23,17 @@ wss.on('connection', (ws) => {
   else {
     ws.id = wss.getUniqueID();
   }
+  console.log("Connect : ", ws.id);
 
   ws.on('message', (message) => {
     const { roomId, ...response} = JSON.parse(message);
     switch (response.type) {
       case "join":
-        joinRoom(ws, roomId);
+        joinRoom(ws, roomId, response);
         break;
       case "uploader_connect":
         callRoom(ws, roomId, (room) => room.connectSource(ws));
+        break;
       case "uploader_offer":
         callRoom(ws, roomId, (room) => room.sendAnswerToSourcePC(ws, response));
         break;
@@ -55,7 +57,7 @@ wss.on('connection', (ws) => {
 
   ws.on('close', () => {
     const leftCount = house[ws.roomId].leaveClient(ws);
-    console.log(ws.id + " disconnect");
+    console.log(ws.id + " disconnect / left : " + leftCount);
     
     if (leftCount === 0) removeRoom(ws.roomId);
   })
@@ -71,10 +73,15 @@ const removeRoom = (roomId) => {
   console.log("the empty room removed :", roomId);
 }
 
-const joinRoom = (ws, roomId) => {
+const joinRoom = (ws, roomId, response) => {
   if (!house[roomId]) {
     house[roomId] = new Room();
   }
+
+  if (response.clientId) {
+    ws.id = response.clientId;
+  }
+  console.log(ws.id);
 
   house[roomId].join(ws);
   ws.roomId = roomId;
