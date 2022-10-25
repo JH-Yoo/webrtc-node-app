@@ -7,7 +7,7 @@ const server = http.createServer(app);
 import { WebSocketServer } from "ws";
 const wss = new WebSocketServer({ server });
 
-import { getConst } from "../lib/utils.js";
+import { getConst, signal } from "../lib/utils.js";
 import Room from "../lib/room.js";
 
 const house = {};
@@ -28,25 +28,25 @@ wss.on('connection', (ws) => {
   ws.on('message', (message) => {
     const { roomId, ...response} = JSON.parse(message);
     switch (response.type) {
-      case "join":
+      case signal.join:
         joinRoom(ws, roomId, response);
         break;
-      case "uploader_connect":
+      case signal.uploader.connect:
         callRoom(ws, roomId, (room) => room.connectSource(ws));
         break;
-      case "uploader_offer":
+      case signal.uploader.offer:
         callRoom(ws, roomId, (room) => room.sendAnswerToSourcePC(ws, response));
         break;
-      case "downloader_answer":
+      case signal.downloader.answer:
         callRoom(ws, roomId, (room) => room.receiveAnswerFromRelayPC(ws.id, response));
         break;
-      case "uploader_candidate":
+      case signal.uploader.candidate:
         callRoom(ws, roomId, (room) => room.getSourceIceCandidate(ws.id, response));
         break;
-      case "downloader_candidate":
+      case signal.downloader.candidate:
         callRoom(ws, roomId, (room) => room.getRelayIceCandidate(ws.id, response));
         break;
-      case "uploader_stats":
+      case signal.uploader.stats:
         callRoom(ws, roomId, (room) => room.setStats(ws, response));
         break;
       default:
