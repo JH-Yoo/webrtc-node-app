@@ -49,6 +49,9 @@ wss.on('connection', (ws) => {
       case signal.uploader.stats:
         callRoom(ws, roomId, (room) => room.setStats(ws, response));
         break;
+      case signal.uploader.toggleVideo:
+        callRoom(ws, roomId, (room) => room.toggleVideo(ws));
+        break;
       default:
         console.log("error : un expected type! : " + response.type);
         break;
